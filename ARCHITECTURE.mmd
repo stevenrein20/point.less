@@ -1,6 +1,9 @@
 
 graph TD
 
+%% Style definitions for completed components
+classDef completed fill:#90EE90,stroke:#006400,stroke-width:2px
+
 subgraph Client[Client Layer]
     UI[Copilot Extension]
     UI2[Jira Integration]
@@ -9,18 +12,18 @@ subgraph Client[Client Layer]
 end
 
 subgraph Logic[Application Layer]
-    Interface[Solid Interface]
-    Orchestration[Orchestration]
-    CoreEngine[Pointing Engine]
+    Interface[Solid Interface]:::completed
+    Orchestration[Orchestration]:::completed
+    CoreEngine[Pointing Engine]:::completed
 end
 
 subgraph Integration[Integration Layer]
-    AdapterJira[Jira Adapter]
+    AdapterJira[Jira Adapter]:::completed
     AdapterGitHub[GitHub Adapter]
 end
 
 subgraph External[External Systems]
-    JiraAPI[Jira API]
+    JiraAPI[Jira API]:::completed
     GitHubAPI[GitHub API]
 end
 

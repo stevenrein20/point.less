@@ -6,6 +6,11 @@ Point.Less is an intelligent story pointing engine that leverages LLM capabiliti
 
 The system is built with a layered architecture that separates concerns and promotes maintainability:
 
+- **Engine**: Core pointing engine that processes stories and generates estimates
+- **Types**: Shared type definitions and interfaces
+- **Jira Adapter**: Integration with Jira for fetching and processing stories
+- **Orchestrator**: Coordinates the workflow between different components
+
 For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 
@@ -13,8 +18,9 @@ For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE
 
 - Multiple LLM provider support (OpenAI, Anthropic, Google)
 - Consistent story point estimation based on historical data
-- Integration with popular project management tools
-- Extensible architecture for custom integrations
+- Native Jira integration for seamless workflow
+- Extensible adapter architecture for custom integrations
+- Type-safe API with comprehensive TypeScript support
 
 ## Getting Started
 
@@ -42,38 +48,6 @@ pnpm dev
 pnpm lint
 ```
 
-## Usage Example
-
-```typescript
-import { PointLessEngine, PointLessEngineBuilder, LLMProvider } from '@pointless/engine';
-
-// Configure the engine
-const config = {
-  provider: LLMProvider.OPENAI,
-  apiKey: 'your-api-key',
-  model: 'gpt-4o-mini'
-};
-
-// Create engine instance
-const engine = new PointLessEngineBuilder(config).build();
-
-// Get story points estimation
-const result = await engine.point({
-  referenceStories: [
-    {
-      content: 'As a user, I want to log in with my email',
-      points: 2
-    }
-  ],
-  story: {
-    content: 'As a user, I want to reset my password'
-  }
-});
-
-console.log(result.points); // Estimated points
-console.log(result.reason); // Explanation for the estimation
-```
-
 ## Project Structure
 
 ```
@@ -82,6 +56,9 @@ console.log(result.reason); // Explanation for the estimation
 │   └── example/         # Example implementation
 └── packages/
     ├── engine/         # Core pointing engine
+    ├── types/          # Shared type definitions
+    ├── jira-adapter/   # Jira integration
+    ├── orchestrator/   # Workflow coordination
     ├── eslint-config/  # Shared ESLint configuration
     └── typescript-config/ # Shared TypeScript configuration
 ```
