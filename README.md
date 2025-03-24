@@ -1,84 +1,91 @@
-# Turborepo starter
+# Point.Less
 
-This Turborepo starter is maintained by the Turborepo core team.
+Point.Less is an intelligent story pointing engine that leverages LLM capabilities to provide consistent and data-driven story point estimates for agile teams.
 
-## Using this example
+## Architecture
 
-Run the following command:
+The system is built with a layered architecture that separates concerns and promotes maintainability:
 
-```sh
-npx create-turbo@latest
+For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+
+## Features
+
+- Multiple LLM provider support (OpenAI, Anthropic, Google)
+- Consistent story point estimation based on historical data
+- Integration with popular project management tools
+- Extensible architecture for custom integrations
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 18
+- pnpm >= 9.0.0
+
+### Installation
+
+```bash
+pnpm install
 ```
 
-## What's inside?
+### Development
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
+```bash
+# Build all packages
 pnpm build
-```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
+# Start development mode
 pnpm dev
+
+# Run linting
+pnpm lint
 ```
 
-### Remote Caching
+## Usage Example
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+```typescript
+import { PointLessEngine, PointLessEngineBuilder, LLMProvider } from '@pointless/engine';
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+// Configure the engine
+const config = {
+  provider: LLMProvider.OPENAI,
+  apiKey: 'your-api-key',
+  model: 'gpt-4o-mini'
+};
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+// Create engine instance
+const engine = new PointLessEngineBuilder(config).build();
+
+// Get story points estimation
+const result = await engine.point({
+  referenceStories: [
+    {
+      content: 'As a user, I want to log in with my email',
+      points: 2
+    }
+  ],
+  story: {
+    content: 'As a user, I want to reset my password'
+  }
+});
+
+console.log(result.points); // Estimated points
+console.log(result.reason); // Explanation for the estimation
+```
+
+## Project Structure
 
 ```
-cd my-turborepo
-npx turbo login
+.
+├── apps/                # Applications
+│   └── example/         # Example implementation
+└── packages/
+    ├── engine/         # Core pointing engine
+    ├── eslint-config/  # Shared ESLint configuration
+    └── typescript-config/ # Shared TypeScript configuration
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## License
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+MIT

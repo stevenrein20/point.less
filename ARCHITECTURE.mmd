@@ -1,0 +1,33 @@
+
+graph TD
+
+subgraph Client[Client Layer]
+    UI[Copilot Extension]
+    UI2[Jira Integration]
+    UI3[Web App]
+    UI4[REST API]
+end
+
+subgraph Logic[Application Layer]
+    Interface[Solid Interface]
+    Orchestration[Orchestration]
+    CoreEngine[Pointing Engine]
+end
+
+subgraph Integration[Integration Layer]
+    AdapterJira[Jira Adapter]
+    AdapterGitHub[GitHub Adapter]
+end
+
+subgraph External[External Systems]
+    JiraAPI[Jira API]
+    GitHubAPI[GitHub API]
+end
+
+Client -->|User Inputs| Interface
+Interface --> Orchestration
+Orchestration -->|Fetch| Integration
+AdapterJira -->|API Call| JiraAPI
+AdapterGitHub -->|API Call| GitHubAPI
+Orchestration -->|Invoke| CoreEngine
+CoreEngine -->|Recommendations| Client

@@ -1,4 +1,7 @@
 {
+  "workspaces": [
+    "packages/*"
+  ],
   "name": "point.less",
   "private": true,
   "scripts": {
