@@ -29,7 +29,7 @@ export class PointLessEngine extends Pointer {
   }
 
   private async buildPrompt(request: PointerRequest): Promise<string> {
-    const { referenceStories, story } = request;
+    const { referenceStories, story, customInstructions } = request;
 
     const referenceStoriesText = (referenceStories ?? [])
       .map(
@@ -38,7 +38,7 @@ export class PointLessEngine extends Pointer {
       )
       .join("\n\n");
 
-    return `Given the following reference stories and a new story, analyze the new story and assign points based on the reference stories.
+    const basePrompt = `Given the following reference stories and a new story, analyze the new story and assign points based on the reference stories.
 
 Reference Stories:
 ${referenceStoriesText}
@@ -46,7 +46,12 @@ ${referenceStoriesText}
 New Story:
 Title: ${story.title || "Untitled"}
 Content: ${story.content}
+`;
 
-Please analyze the new story and assign points based on the reference stories. Consider the complexity, creativity, and overall impact of the story.`;
+    const instructions = customInstructions
+      ? `\n${customInstructions}`
+      : "\nPlease analyze the new story and assign points based on the reference stories. Consider the complexity, creativity, and overall impact of the story.";
+
+    return basePrompt + instructions;
   }
 }

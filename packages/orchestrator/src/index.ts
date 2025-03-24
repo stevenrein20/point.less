@@ -24,9 +24,11 @@ export class PointLessOrchestrator {
       request.referenceStories
     );
 
-    return this.pointer.point({ story, referenceStories });
-
-    return { points: 0, explanation: "" };
+    return this.pointer.point({
+      story,
+      referenceStories,
+      customInstructions: request.customInstructions,
+    });
   }
 
   private async resolveStory(story: Story | StoryLocation): Promise<Story> {

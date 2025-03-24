@@ -33,6 +33,7 @@ export interface StoryLocation {
 export interface PointerRequest {
   story: Story;
   referenceStories?: Array<ReferenceStory>;
+  customInstructions?: string;
 }
 
 /**
@@ -62,15 +63,16 @@ export abstract class StorySourceAdapter {
 
 /**
  * What should this eveutally include. It should someday have:
- *  - story: string | Story | StoryLocation
- *  - reference stories (optional)
- *  - custom instructions (optional)
  *  - model/provider selection (optional)
  *  - reference stories could also include links to github PRs where we can look at commits and diffs.
+ */
+/**
+ * Request structure for point estimation
  */
 export interface PointLessRequest {
   story: Story | StoryLocation;
   referenceStories?: Array<ReferenceStory | StoryLocation>;
+  customInstructions?: string;
 }
 
 /**

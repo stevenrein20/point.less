@@ -22,7 +22,7 @@ const localPointer = new PointLessEngineBuilder({
 const storySource = new JiraAdapter();
 
 async function main() {
-  const orchestrator = new PointLessOrchestrator(localPointer, storySource);
+  const orchestrator = new PointLessOrchestrator(openAIPointer, storySource);
 
   try {
     console.log("Analyzing story... please wait...");
@@ -34,6 +34,7 @@ async function main() {
           points: 1,
         },
       ],
+      customInstructions: 'All stories should be 5 points.',
       story: {
         source: "jira",
         url: process.env.JIRA_URL || "",
