@@ -1,17 +1,7 @@
 import "dotenv/config";
-import {
-  PointLessEngineBuilder,
-  LLMProvider,
-  OpenAIModel,
-} from "@pointless/engine";
+import { PointLessEngineBuilder, LLMProvider } from "@pointless/engine";
 import { JiraAdapter } from "@pointless/jira-adapter";
 import { PointLessOrchestrator } from "@pointless/orchestrator";
-
-const openAIPointer = new PointLessEngineBuilder({
-  provider: LLMProvider.OPENAI,
-  apiKey: process.env.OPENAI_API_KEY || "",
-  model: OpenAIModel.GPT_4_O_MINI,
-}).build();
 
 const localPointer = new PointLessEngineBuilder({
   provider: LLMProvider.LOCAL,
@@ -22,7 +12,7 @@ const localPointer = new PointLessEngineBuilder({
 const storySource = new JiraAdapter();
 
 async function main() {
-  const orchestrator = new PointLessOrchestrator(openAIPointer, storySource);
+  const orchestrator = new PointLessOrchestrator(localPointer, storySource);
 
   try {
     console.log("Analyzing story... please wait...");
@@ -34,7 +24,7 @@ async function main() {
           points: 1,
         },
       ],
-      customInstructions: 'All stories should be 5 points.',
+      customInstructions: "All stories should be 5 points.",
       story: {
         source: "jira",
         url: process.env.JIRA_URL || "",

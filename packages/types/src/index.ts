@@ -22,9 +22,9 @@ export interface ReferenceStory extends Story {
  */
 export interface StoryLocation {
   source: "jira" | "github";
-  url: string; // https://your-domain.atlassian.net or https://github.com/stevenrein20/point.less
   issue: string; // SCRUM-1 or 1
-  authorization: string; // Bearer token or PAT
+  url?: string; // https://your-domain.atlassian.net or https://github.com/stevenrein20/point.less
+  authorization?: string; // Bearer token or PAT
 }
 
 /**

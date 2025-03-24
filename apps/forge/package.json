@@ -1,0 +1,27 @@
+{
+  "name": "@pointless/forge",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src/",
+    "build": "forge deploy",
+    "forge-install": "forge install",
+    "dev": "forge tunnel"
+  },
+  "devDependencies": {
+    "@forge/cli": "^11.1.0",
+    "eslint": "^8.56.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@forge/bridge": "^4.5.0",
+    "@forge/react": "^11.0.0",
+    "@forge/resolver": "^1.6.8",
+    "@pointless/engine": "workspace:*",
+    "@pointless/jira-adapter": "workspace:*",
+    "@pointless/orchestrator": "workspace:*",
+    "react": "^18.2.0"
+  }
+}

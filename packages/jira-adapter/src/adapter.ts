@@ -1,4 +1,4 @@
-import axios, { all, AxiosInstance } from "axios";
+import axios from "axios";
 import {
   ReferenceStory,
   Story,
@@ -7,11 +7,20 @@ import {
 } from "@pointless/types";
 
 export class JiraAdapter extends StorySourceAdapter {
-  private client: AxiosInstance;
+  private requestJira: (path: string, config: object) => any;
 
-  constructor() {
+  constructor(requestJira?: (path: string, config: object) => any) {
     super();
-    this.client = axios.create();
+
+    if (requestJira) {
+      this.requestJira = requestJira;
+      return;
+    }
+
+    this.requestJira = async (path: string, config: object) => {
+      const response = await axios.get(path, config);
+      return response.data;
+    };
   }
 
   /**
@@ -19,6 +28,7 @@ export class JiraAdapter extends StorySourceAdapter {
    */
   async fetchStory(location: StoryLocation): Promise<Story> {
     const issue = await this.fetchIssue(location);
+    console.log(issue);
 
     this.validateIssueType(issue);
 
@@ -43,9 +53,12 @@ export class JiraAdapter extends StorySourceAdapter {
   }
 
   private async fetchIssue(location: StoryLocation): Promise<any> {
-    const response = await this.client.get(
-      `${location.url}/rest/api/3/issue/${location.issue}`,
-      { headers: { Authorization: location.authorization } }
+    const response = await this.requestJira(
+      `/rest/api/3/issue/${location.issue}`,
+      {
+        headers: { Authorization: location.authorization },
+        origin: location.url,
+      }
     );
 
     return response.data;
@@ -55,9 +68,12 @@ export class JiraAdapter extends StorySourceAdapter {
     location: StoryLocation
   ): Promise<Array<string>> {
     // Get the first page to determine total pages needed
-    const firstResponse = await this.client.get(
-      `${location.url}/rest/api/3/field/search?query=point&startAt=0`,
-      { headers: { Authorization: location.authorization } }
+    const firstResponse = await this.requestJira(
+      `/rest/api/3/field/search?query=point&startAt=0`,
+      {
+        headers: { Authorization: location.authorization },
+        origin: location.url,
+      }
     );
 
     const { values, maxResults, total } = firstResponse.data;
@@ -70,9 +86,12 @@ export class JiraAdapter extends StorySourceAdapter {
       async (accPromise, pageIndex) => {
         const acc = await accPromise;
         const startAt = pageIndex * maxResults;
-        const response = await this.client.get(
-          `${location.url}/rest/api/3/field/search?query=point&startAt=${startAt}`,
-          { headers: { Authorization: location.authorization } }
+        const response = await this.requestJira(
+          `/rest/api/3/field/search?query=point&startAt=${startAt}`,
+          {
+            headers: { Authorization: location.authorization },
+            origin: location.url,
+          }
         );
         return acc.concat(response.data.values);
       },
