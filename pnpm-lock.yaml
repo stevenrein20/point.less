@@ -51,6 +51,9 @@ importers:
 
   apps/forge:
     dependencies:
+      '@forge/api':
+        specifier: ^5.1.1
+        version: 5.1.1
       '@forge/bridge':
         specifier: ^4.5.0
         version: 4.5.0(@types/react@18.3.20)(react@18.3.1)
@@ -58,8 +61,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0(@atlaskit/link-provider@2.0.0(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(@atlaskit/media-core@35.0.0(react@18.3.1))(@atlaskit/media-state@1.5.1(@babel/core@7.26.10)(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@babel/core@7.26.10)(@react-loosely-lazy/manifest@1.2.0)(@types/node@20.17.25)(@types/react@18.3.20)(eslint@8.57.1)(immer@9.0.21)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(scheduler@0.23.2)(typescript@5.8.2)(url-search-params@0.10.2)
       '@forge/resolver':
-        specifier: ^1.6.8
-        version: 1.6.8
+        specifier: ^1.6.9
+        version: 1.6.9
       '@pointless/engine':
         specifier: workspace:*
         version: link:../../packages/engine
@@ -2041,6 +2044,9 @@ packages:
   '@forge/api@5.1.0':
     resolution: {integrity: sha512-0Hqwa7Rdtfg/u7kFJ27UJ7U6uzqUUk68W/LRoMZvLV2xTqc7a+DojT66FufphYpPhJclvHqLbjwWE8qu+jLoGA==}
 
+  '@forge/api@5.1.1':
+    resolution: {integrity: sha512-Ph3w6H404bg/DGBoqksUaxNt19f/cONrV1UNEhdMIISo/R8jVSaeimgcC8hNDbd8iYVJfRoDvzlKmjBGod1AAw==}
+
   '@forge/auth@0.0.7':
     resolution: {integrity: sha512-9wzbl7FoaTZsVXuBI6F4O9TWRucpM76WILKoimGSK/1n6JMiai0QHBmBJLAon8jO/MmTJSHPxLE48UjR+J2s7Q==}
 
@@ -2080,14 +2086,17 @@ packages:
   '@forge/react@11.0.0':
     resolution: {integrity: sha512-O9/LnFmkQI5MNgnqDPSTSkGZjgRD4nTGuAjfuWAt+zVIi4nTAAuhDGQg2RlklNSMN1Bqp/pIR2I/vaxAYdqPLg==}
 
-  '@forge/resolver@1.6.8':
-    resolution: {integrity: sha512-rOD+II3fwb5tNMbU5A6pNwnwNyUwcCY0LhooQ2p0MhMp/bdkRQOYnL1zTfAtWFc+fpbrzyOXIgAXAI9E0ORvEg==}
+  '@forge/resolver@1.6.9':
+    resolution: {integrity: sha512-Q8VGh6QSDIxUcPikVZfhgAqptebKDuZ1Kkoeb/u2EWhs6nCkbnd9rBzKnykvccsvfofVTTQrdsNCQ8b3R/gsWw==}
 
   '@forge/runtime@5.10.6':
     resolution: {integrity: sha512-RuIPZ28gMinE5reyifUXtrPa8eyC+V0uqXHxucB82YPbyqdCFh6VlTozEYeHwA+xTKPAgwxxs1ma5AL9y1SbuQ==}
 
   '@forge/storage@1.7.3':
     resolution: {integrity: sha512-i6tN5GlLleegMzpkT3nutxnVASwbSTxYAubKXA989zigF/ndaqqFiD5c6GYZb5jEgo7VT872OzxHAL3kEY0adQ==}
+
+  '@forge/storage@1.8.0':
+    resolution: {integrity: sha512-xDHyrXKZ10r99vXsWmuD7+AUFWrptyAi8HFk+97froly6MDKT4V1zgV/0eV8fOCVKz9GX+HiGZNTnCjzpGqKxA==}
 
   '@forge/tunnel@5.9.3':
     resolution: {integrity: sha512-5mJkLPNqOJAjxde0mLh/0L5wrz07t9/22OxqbObUkI47UXUnO+/PuWROt3nbw3/Lb+eSg+UpE5Il3Ey9e2V7WQ==}
@@ -11733,6 +11742,14 @@ snapshots:
       '@forge/util': 1.4.8
       headers-utils: 3.0.2
 
+  '@forge/api@5.1.1':
+    dependencies:
+      '@forge/auth': 0.0.7
+      '@forge/egress': 1.4.0
+      '@forge/storage': 1.8.0
+      '@forge/util': 1.4.8
+      headers-utils: 3.0.2
+
   '@forge/auth@0.0.7':
     dependencies:
       tslib: 2.8.1
@@ -11992,9 +12009,9 @@ snapshots:
       - url-search-params
       - worker-loader
 
-  '@forge/resolver@1.6.8':
+  '@forge/resolver@1.6.9':
     dependencies:
-      '@forge/api': 5.1.0
+      '@forge/api': 5.1.1
 
   '@forge/runtime@5.10.6':
     dependencies:
@@ -12012,6 +12029,8 @@ snapshots:
       - utf-8-validate
 
   '@forge/storage@1.7.3': {}
+
+  '@forge/storage@1.8.0': {}
 
   '@forge/tunnel@5.9.3(@types/express@4.17.21)(webpack@5.94.0)':
     dependencies:

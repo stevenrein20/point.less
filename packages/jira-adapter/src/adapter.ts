@@ -109,12 +109,12 @@ export class JiraAdapter extends StorySourceAdapter {
     }
 
     const allFields = await this.fetchAllFields(location);
-    allFields.forEach((field: string) => {
+    for (const field of allFields) {
       const value = fields[field];
-      if (value !== undefined) {
+      if (value !== undefined && typeof value === "number") {
         return value;
       }
-    });
+    }
 
     return undefined; // Return undefined if no story points are found in any field
   }

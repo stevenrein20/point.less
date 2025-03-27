@@ -1,6 +1,6 @@
 modules:
   jira:issuePanel:
-    - key: -pointless-issue-panel
+    - key: pointless-issue-panel
       resource: main
       render: native
       title: "@pointless"
@@ -18,5 +18,5 @@ resources:
     path: src/frontend/index.jsx
 app:
   runtime:
-    name: nodejs20.x
+    name: nodejs22.x
   id: ari:cloud:ecosystem::app/c4ad7a9f-8ab3-492b-bc3c-f13143bbb7ed
