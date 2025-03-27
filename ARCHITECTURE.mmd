@@ -5,9 +5,11 @@ graph TD
 classDef completed fill:#90EE90,stroke:#006400,stroke-width:2px
 
 subgraph Client[Client Layer]
-    UI[Copilot Extension]
+    %% Copilot Extension - Should store in the .pointless file. Should authenicate to OpenAI and Jira by using API keys in the extension settings?.
+    UI[Copilot Extension] 
     UI2[Jira Integration]
-    UI3[Web App]
+    %% Web App - Should store context (ref stories, custom instruction). Should also have a way to download it to some file format like .pointless. in local storage. Should authenicate to Jira in app, OpenAI should use my Key and we should have Firebase Auth?
+    UI3[Web App] 
     UI4[REST API]
 end
 
