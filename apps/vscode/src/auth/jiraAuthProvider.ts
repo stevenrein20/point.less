@@ -22,7 +22,7 @@ configDotenv();
 
 const AUTH_TYPE = `jira`;
 const AUTH_NAME = `Jira`;
-const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.auth.sessions`;
+const SESSIONS_SECRET_KEY = `${AUTH_TYPE}.auth.session`;
 
 class UriEventHandler extends EventEmitter<Uri> implements UriHandler {
   public handleUri(uri: Uri) {
@@ -69,16 +69,80 @@ export class JiraAuthenticationProvider
     return this._sessionChangeEmitter.event;
   }
 
-  /**
-   * Get the existing sessions
-   * @param scopes
-   * @returns
-   */
   public async getSessions(
     scopes: readonly string[] | undefined,
     options: AuthenticationProviderSessionOptions
   ): Promise<AuthenticationSession[]> {
     const allSessions = await this.context.secrets.get(SESSIONS_SECRET_KEY);
+    const allTokens = await this.context.secrets.get(
+      `${SESSIONS_SECRET_KEY}.tokens`
+    );
+
+    if (allTokens) {
+      const tokens = JSON.parse(allTokens);
+      const currentToken = tokens[0]; // Since we don't support multiple accounts
+
+      // Check if token needs refresh (5 minutes before expiration)
+      const expirationTime =
+        new Date().getTime() + currentToken.expires_in * 1000;
+      const shouldRefresh = expirationTime - new Date().getTime() <= 300000; // 5 minutes in milliseconds
+
+      if (shouldRefresh) {
+        try {
+          const response = await axios.post(
+            "https://auth.atlassian.com/oauth/token",
+            {
+              grant_type: "refresh_token",
+              client_id: process.env.JIRA_CLIENT_ID,
+              client_secret: process.env.JIRA_CLIENT_SECRET,
+              refresh_token: currentToken.refresh_token,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          // Update tokens in storage
+          const newTokens = [
+            {
+              access_token: response.data.access_token,
+              refresh_token: response.data.refresh_token,
+              expires_in: response.data.expires_in,
+            },
+          ];
+          await this.context.secrets.store(
+            `${SESSIONS_SECRET_KEY}.tokens`,
+            JSON.stringify(newTokens)
+          );
+
+          // Update sessions with new access token
+          if (allSessions) {
+            const sessions = JSON.parse(allSessions);
+            sessions[0].accessToken = response.data.access_token;
+            await this.context.secrets.store(
+              SESSIONS_SECRET_KEY,
+              JSON.stringify(sessions)
+            );
+
+            this._sessionChangeEmitter.fire({
+              added: [],
+              removed: [],
+              changed: sessions,
+            });
+
+            return sessions;
+          }
+        } catch (error) {
+          console.error("Failed to refresh token:", error);
+          // Token refresh failed, clear sessions and tokens
+          await this.context.secrets.delete(SESSIONS_SECRET_KEY);
+          await this.context.secrets.delete(`${SESSIONS_SECRET_KEY}.tokens`);
+          return [];
+        }
+      }
+    }
 
     if (allSessions) {
       return JSON.parse(allSessions) as AuthenticationSession[];
@@ -87,8 +151,16 @@ export class JiraAuthenticationProvider
     return [];
   }
 
-  private async login(scopes: string[] = []) {
-    return await window.withProgress<string>(
+  private async login(scopes: string[] = []): Promise<{
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+  }> {
+    return await window.withProgress<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }>(
       {
         location: ProgressLocation.Notification,
         title: "Signing in to Jira...",
@@ -96,32 +168,37 @@ export class JiraAuthenticationProvider
       },
       async (_, token) => {
         const stateId = crypto.randomUUID();
-
         this._pendingStates.push(stateId);
 
+        // Always request offline_access scope for refresh tokens
+        const allScopes = [...new Set([...scopes, "offline_access"])];
         const searchParams = new URLSearchParams([
           ["audience", "api.atlassian.com"],
           ["response_type", "code"],
           ["client_id", process.env.JIRA_CLIENT_ID!],
           ["redirect_uri", this.redirectUri],
           ["state", stateId],
-          ["scope", scopes.join(" ")],
+          ["scope", allScopes.join(" ")],
           ["prompt", "consent"],
         ]);
+
         const uri = Uri.parse(
           `https://auth.atlassian.com/authorize?${searchParams.toString()}`
         );
         await env.openExternal(uri);
 
         let codeExchangePromise = this._codeExchangePromises.get(
-          scopes.join(" ")
+          allScopes.join(" ")
         );
         if (!codeExchangePromise) {
           codeExchangePromise = promiseFromEvent(
             this._uriHandler.event,
-            this.handleUri(scopes)
+            this.handleUri(allScopes)
           );
-          this._codeExchangePromises.set(scopes.join(" "), codeExchangePromise);
+          this._codeExchangePromises.set(
+            allScopes.join(" "),
+            codeExchangePromise
+          );
         }
 
         try {
@@ -142,7 +219,7 @@ export class JiraAuthenticationProvider
             (n) => n !== stateId
           );
           codeExchangePromise?.cancel.fire();
-          this._codeExchangePromises.delete(scopes.join(" "));
+          this._codeExchangePromises.delete(allScopes.join(" "));
         }
       }
     );
@@ -182,6 +259,7 @@ export class JiraAuthenticationProvider
           {
             grant_type: "authorization_code",
             client_id: process.env.JIRA_CLIENT_ID,
+            client_secret: process.env.JIRA_CLIENT_SECRET,
             code: code,
             redirect_uri: this.redirectUri,
           },
@@ -196,18 +274,22 @@ export class JiraAuthenticationProvider
           throw new Error("No access token received");
         }
 
-        resolve(response.data.access_token);
+        resolve(response.data);
       } catch (error) {
         reject(error);
       }
     };
 
-  private async getUserInfo(
-    token: string
-  ): Promise<{ name: string; email: string }> {
+  private async getUserInfo({
+    access_token,
+  }: {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+  }): Promise<{ name: string; email: string }> {
     const response = await axios.get("https://api.atlassian.com/me", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${access_token}`,
         Accept: "application/json",
       },
     });
@@ -219,26 +301,31 @@ export class JiraAuthenticationProvider
 
   public async createSession(scopes: string[]): Promise<AuthenticationSession> {
     try {
-      const token = await this.login(scopes);
-      if (!token) {
+      const tokenDetails = await this.login(scopes);
+      if (!tokenDetails) {
         throw new Error(`Jira login failure`);
       }
 
-      const userinfo = await this.getUserInfo(token);
+      const userinfo = await this.getUserInfo(tokenDetails);
 
       const session: AuthenticationSession = {
         id: crypto.randomUUID(),
-        accessToken: token,
+        accessToken: tokenDetails.access_token,
         account: {
           label: userinfo.name,
           id: userinfo.email,
         },
-        scopes: [],
+        scopes: scopes,
       };
 
       await this.context.secrets.store(
         SESSIONS_SECRET_KEY,
         JSON.stringify([session])
+      );
+
+      await this.context.secrets.store(
+        `${SESSIONS_SECRET_KEY}.tokens`,
+        JSON.stringify([tokenDetails])
       );
 
       this._sessionChangeEmitter.fire({
@@ -259,26 +346,7 @@ export class JiraAuthenticationProvider
    * @param sessionId
    */
   public async removeSession(sessionId: string): Promise<void> {
-    const allSessions = await this.context.secrets.get(SESSIONS_SECRET_KEY);
-    if (allSessions) {
-      let sessions = JSON.parse(allSessions) as AuthenticationSession[];
-      const sessionIdx = sessions.findIndex((s) => s.id === sessionId);
-      const session = sessions[sessionIdx];
-      sessions.splice(sessionIdx, 1);
-
-      await this.context.secrets.store(
-        SESSIONS_SECRET_KEY,
-        JSON.stringify(sessions)
-      );
-
-      if (session) {
-        this._sessionChangeEmitter.fire({
-          added: [],
-          removed: [session],
-          changed: [],
-        });
-      }
-    }
+    throw new Error("Method not implemented.");
   }
 
   /**

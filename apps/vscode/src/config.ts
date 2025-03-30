@@ -26,9 +26,9 @@ export class ConfigManager {
     return { referenceStories: [], customInstructions: undefined };
   }
 
-  static async getReferenceStories(
-    session: vscode.AuthenticationSession
-  ): Promise<(ReferenceStory | StoryLocation)[]> {
+  static async getReferenceStories(): Promise<
+    (ReferenceStory | StoryLocation)[]
+  > {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
     if (!workspaceFolder) {
       return [];
@@ -36,11 +36,7 @@ export class ConfigManager {
 
     const config = await this.loadConfig(workspaceFolder);
 
-    return config.referenceStories.map((story) =>
-      (story as StoryLocation).source === "jira"
-        ? { ...story, authorization: `Bearer ${session.accessToken}` }
-        : story
-    );
+    return config.referenceStories;
   }
 
   static async getCustomInstructions(): Promise<string | undefined> {

@@ -9,6 +9,7 @@ import { PointLessOrchestrator } from "@pointless/orchestrator";
 import { ConfigManager } from "./config";
 import { JiraAuthenticationProvider } from "./auth/jiraAuthProvider";
 import axios from "axios";
+import { Story, StoryLocation } from "@pointless/types";
 
 export function activate(context: vscode.ExtensionContext) {
   const jiraAuthProvider = new JiraAuthenticationProvider(context);
@@ -27,20 +28,50 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const session = await vscode.authentication.getSession(
-        "jira",
-        ["read:jira-work", "write:jira-work", "read:me"],
-        { createIfNone: true }
+      const storySource = await vscode.window.showQuickPick(
+        [
+          {
+            label: "Custom Story",
+            description: "Enter a custom story title and content",
+          },
+          { label: "Jira Issue", description: "Use an existing Jira issue" },
+        ],
+        { placeHolder: "Select story source" }
       );
 
-      const jiraCloudId = await getJiraCloudId(config, session);
+      if (!storySource) return;
 
-      const issueKey = await vscode.window.showInputBox({
-        prompt: "Enter Jira issue key (e.g. SCRUM-123)",
-        placeHolder: "SCRUM-123",
-      });
+      const referenceStories = await ConfigManager.getReferenceStories();
+      const customInstructions = await ConfigManager.getCustomInstructions();
 
-      if (!issueKey) return;
+      let story: Story | StoryLocation;
+      if (storySource.label === "Custom Story") {
+        const title = await vscode.window.showInputBox({
+          prompt: "Enter story title",
+          placeHolder: "Story title",
+        });
+        if (!title) return;
+
+        const content = await vscode.window.showInputBox({
+          prompt: "Enter story content",
+          placeHolder: "Story description",
+        });
+        if (!content) return;
+
+        story = { title, content };
+      } else {
+        const issueKey = await vscode.window.showInputBox({
+          prompt: "Enter Jira issue key (e.g. SCRUM-123)",
+          placeHolder: "SCRUM-123",
+        });
+
+        if (!issueKey) return;
+
+        story = {
+          source: "jira" as const,
+          issue: issueKey,
+        };
+      }
 
       try {
         const engine = new PointLessEngineBuilder({
@@ -49,16 +80,40 @@ export function activate(context: vscode.ExtensionContext) {
           model: OpenAIModel.GPT_4_O_MINI,
         }).build();
 
-        const jiraAdapter = new JiraAdapter(
-          async (path: string, config: object) => {
+        let jiraAdapter: JiraAdapter;
+        if (
+          (story as StoryLocation).source ||
+          referenceStories.some((ref) => (ref as StoryLocation).source)
+        ) {
+          const session = await vscode.authentication.getSession(
+            "jira",
+            ["read:jira-work", "write:jira-work", "read:me"],
+            { createIfNone: true }
+          );
+
+          const jiraCloudId = await getJiraCloudId(config, session);
+          if (!jiraCloudId) return;
+
+          jiraAdapter = new JiraAdapter(async (path: string, other: object) => {
             const response = await axios.get(
               `https://api.atlassian.com/ex/jira/${jiraCloudId}${path}`,
-              config
+              {
+                ...other,
+                headers: {
+                  Authorization: `Bearer ${session.accessToken}`,
+                  Accept: "application/json",
+                },
+              }
             );
 
             return response;
-          }
-        );
+          });
+        } else {
+          jiraAdapter = new JiraAdapter(async (_: string, __: object) => {
+            throw new Error("Jira adapter not initialized");
+          });
+        }
+
         const orchestrator = new PointLessOrchestrator(engine, jiraAdapter);
 
         vscode.window.withProgress(
@@ -69,22 +124,15 @@ export function activate(context: vscode.ExtensionContext) {
           },
           async () => {
             const request = {
-              story: {
-                source: "jira" as const,
-                issue: issueKey,
-                authorization: `Bearer ${session.accessToken}`,
-              },
-              referenceStories:
-                await ConfigManager.getReferenceStories(session),
-              customInstructions: await ConfigManager.getCustomInstructions(),
+              story,
+              referenceStories,
+              customInstructions,
             };
-
-            console.log(request);
 
             const result = await orchestrator.pointStory(request);
 
             vscode.window.showInformationMessage(
-              `Estimated story points for ${issueKey}: ${result.points}\n\nReasoning: ${result.explanation}`
+              `Estimated story points: ${result.points}\n\nReasoning: ${result.explanation}`
             );
           }
         );

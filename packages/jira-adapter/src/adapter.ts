@@ -19,7 +19,6 @@ export class JiraAdapter extends StorySourceAdapter {
    */
   async fetchStory(location: StoryLocation): Promise<Story> {
     const issue = await this.fetchIssue(location);
-    console.log(issue);
 
     this.validateIssueType(issue);
 
@@ -33,7 +32,7 @@ export class JiraAdapter extends StorySourceAdapter {
     const issue = await this.fetchIssue(location);
 
     this.validateIssueType(issue);
-    const points = await this.findIssueStoryPoints(issue, location);
+    const points = await this.findIssueStoryPoints(issue);
     if (points === undefined) {
       throw new Error("No story points found for the issue");
     }
@@ -46,23 +45,17 @@ export class JiraAdapter extends StorySourceAdapter {
   private async fetchIssue(location: StoryLocation): Promise<any> {
     const response = await this.requestJira(
       `/rest/api/3/issue/${location.issue}`,
-      {
-        headers: { Authorization: location.authorization },
-      }
+      {}
     );
 
     return response.data;
   }
 
-  private async fetchAllFields(
-    location: StoryLocation
-  ): Promise<Array<string>> {
+  private async fetchAllFields(): Promise<Array<string>> {
     // Get the first page to determine total pages needed
     const firstResponse = await this.requestJira(
       `/rest/api/3/field/search?query=point&startAt=0`,
-      {
-        headers: { Authorization: location.authorization },
-      }
+      {}
     );
 
     const { values, maxResults, total } = firstResponse.data;
@@ -77,9 +70,7 @@ export class JiraAdapter extends StorySourceAdapter {
         const startAt = pageIndex * maxResults;
         const response = await this.requestJira(
           `/rest/api/3/field/search?query=point&startAt=${startAt}`,
-          {
-            headers: { Authorization: location.authorization },
-          }
+          {}
         );
         return acc.concat(response.data.values);
       },
@@ -87,16 +78,13 @@ export class JiraAdapter extends StorySourceAdapter {
     );
   }
 
-  private async findIssueStoryPoints(
-    data: any,
-    location: StoryLocation
-  ): Promise<number | undefined> {
+  private async findIssueStoryPoints(data: any): Promise<number | undefined> {
     const fields = data.fields;
     if (!fields) {
       return undefined;
     }
 
-    const allFields = await this.fetchAllFields(location);
+    const allFields = await this.fetchAllFields();
     for (const field of allFields) {
       const value = fields[field];
       if (value !== undefined && typeof value === "number") {

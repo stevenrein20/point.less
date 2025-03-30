@@ -12,15 +12,23 @@ const localPointer = new PointLessEngineBuilder({
   model: "test",
 }).build();
 
-const storySource = new JiraAdapter((path, config) => {
-  return axios.get(`${process.env.JIRA_URL}${path}`, config);
-});
-
 async function main() {
-  const orchestrator = new PointLessOrchestrator(localPointer, storySource);
-
   try {
     console.log("Analyzing story... please wait...");
+
+    const storySource = new JiraAdapter((path, config) => {
+      return axios.get(`${process.env.JIRA_URL}${path}`, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(
+            process.env.JIRA_BASIC_AUTH || ""
+          ).toString("base64")}`,
+        },
+        ...config,
+      });
+    });
+
+    const orchestrator = new PointLessOrchestrator(localPointer, storySource);
+
     const result = await orchestrator.pointStory({
       referenceStories: [
         {
@@ -32,11 +40,7 @@ async function main() {
       customInstructions: "All stories should be 5 points.",
       story: {
         source: "jira",
-
         issue: "SCRUM-1",
-        authorization: `Basic ${Buffer.from(
-          process.env.JIRA_BASIC_AUTH || ""
-        ).toString("base64")}`,
       },
     });
     console.log("\nAnalysis Result:");
