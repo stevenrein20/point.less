@@ -13,14 +13,22 @@ The system is built with a layered architecture that separates concerns and prom
 
 For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE.md).
 
-
 ## Features
 
-- Multiple LLM provider support (OpenAI, Anthropic, Google)
 - Consistent story point estimation based on historical data
 - Native Jira integration for seamless workflow
 - Extensible adapter architecture for custom integrations
 - Type-safe API with comprehensive TypeScript support
+- VS Code Extension with Jira OAuth integration
+- `.pointless` configuration system for reference stories and custom instructions
+- LLM provider abstraction layer (OpenAI implemented, Anthropic and Google in progress)
+
+## Roadmap
+
+- Deliver REST API and Independent front-end (somehow "billthrough" OpenAI or sometone else?)
+- Complete multiple LLM provider support (Anthropic, Google)
+- Enhanced .pointless file creation system (Should look at all completed issues and try to identify accurately pointed ones along with the user. This process should allow the user refine the .pointless config along with an AI. (approve/deny pointing accuracy. Suggest and refine a custom instruction) Probably web only feature)
+- Improved documentation for better developer onboarding
 
 ## Getting Started
 
@@ -53,7 +61,9 @@ pnpm lint
 ```
 .
 ├── apps/                # Applications
-│   └── example/         # Example implementation
+│   ├── example/        # Example implementation
+│   ├── forge/          # Atlassian Forge app
+│   └── vscode/         # VS Code extension
 └── packages/
     ├── engine/         # Core pointing engine
     ├── types/          # Shared type definitions
