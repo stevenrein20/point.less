@@ -13,6 +13,7 @@
     "@pointless/engine": "workspace:*",
     "@pointless/jira-adapter": "workspace:*",
     "@pointless/orchestrator": "workspace:*",
+    "axios": "^1.6.7",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {

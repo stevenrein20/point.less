@@ -1,0 +1,65 @@
+{
+  "name": "pointless",
+  "displayName": "Point.Less",
+  "description": "Story point estimation powered by AI",
+  "version": "0.0.1",
+  "publisher": "pointless",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pointless.estimate",
+        "title": "Point.Less: Estimate Story Points"
+      },
+      {
+        "command": "pointless.configure",
+        "title": "Point.Less: Configure Settings"
+      }
+    ],
+    "configuration": {
+      "title": "Point.Less",
+      "properties": {
+        "pointless.openai.apiKey": {
+          "type": "string",
+          "description": "OpenAI API Key for story point estimation"
+        },
+        "pointless.jira.cloudId": {
+          "type": "string",
+          "description": "Jira Cloud ID"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run build",
+    "lint": "eslint src --ext ts",
+    "dev": "pnpm run watch"
+  },
+  "devDependencies": {
+    "@pointless/types": "workspace:*",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@pointless/engine": "workspace:*",
+    "@pointless/jira-adapter": "workspace:*",
+    "@pointless/orchestrator": "workspace:*",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5"
+  }
+}

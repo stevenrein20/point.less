@@ -9,18 +9,9 @@ import {
 export class JiraAdapter extends StorySourceAdapter {
   private requestJira: (path: string, config: object) => any;
 
-  constructor(requestJira?: (path: string, config: object) => any) {
+  constructor(requestJira: (path: string, config: object) => any) {
     super();
-
-    if (requestJira) {
-      this.requestJira = requestJira;
-      return;
-    }
-
-    this.requestJira = async (path: string, config: object) => {
-      const response = await axios.get(path, config);
-      return response.data;
-    };
+    this.requestJira = requestJira;
   }
 
   /**
@@ -57,7 +48,6 @@ export class JiraAdapter extends StorySourceAdapter {
       `/rest/api/3/issue/${location.issue}`,
       {
         headers: { Authorization: location.authorization },
-        origin: location.url,
       }
     );
 
@@ -72,7 +62,6 @@ export class JiraAdapter extends StorySourceAdapter {
       `/rest/api/3/field/search?query=point&startAt=0`,
       {
         headers: { Authorization: location.authorization },
-        origin: location.url,
       }
     );
 
@@ -90,7 +79,6 @@ export class JiraAdapter extends StorySourceAdapter {
           `/rest/api/3/field/search?query=point&startAt=${startAt}`,
           {
             headers: { Authorization: location.authorization },
-            origin: location.url,
           }
         );
         return acc.concat(response.data.values);

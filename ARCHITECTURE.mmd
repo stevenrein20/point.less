@@ -5,9 +5,7 @@ graph TD
 classDef completed fill:#90EE90,stroke:#006400,stroke-width:2px
 
 subgraph Client[Client Layer]
-    %% Copilot Extension - Should store in the .pointless file. Should authenicate to OpenAI and Jira by using API keys in the extension settings?.
-    UI[Copilot Extension] 
-    UI2[VS Code Extension]
+    UI2[VS Code Extension]:::completed
     UI3[Jira Integration]:::completed
     %% Web App - Should store context (ref stories, custom instruction). Should also have a way to download it to some file format like .pointless. in local storage. Should authenicate to Jira to pull stories, should have fields to do stories locally too, OpenAI should use my Key and we should have Firebase Auth.
     UI4[Web App] 
@@ -22,12 +20,16 @@ end
 
 subgraph Integration[Integration Layer]
     AdapterJira[Jira Adapter]:::completed
-    AdapterGitHub[GitHub Adapter]
+    AdapterRally[Rally Adapter]
+    AdapterTrello[Trello Adapter]
+    AdapterMonday[Monday Adapter]
 end
 
 subgraph External[External Systems]
     JiraAPI[Jira API]:::completed
-    GitHubAPI[GitHub API]
+    RallyAPI[Rally API]
+    TrelloAPI[Trello API]
+    MondayAPI[Monday API]
 end
 
 Client -->|User Inputs| Interface

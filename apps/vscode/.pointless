@@ -1,0 +1,14 @@
+{
+  "referenceStories": [
+    {
+      "source": "jira",
+      "issue": "SCRUM-1"
+    },
+    {
+      "title": "test-story",
+      "content": "This is a test",
+      "points": "1"
+    }
+  ],
+  "customInstructions": "It should definitely be the same as test-story"
+}

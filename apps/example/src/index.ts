@@ -1,7 +1,10 @@
-import "dotenv/config";
+import { configDotenv } from "dotenv";
 import { PointLessEngineBuilder, LLMProvider } from "@pointless/engine";
 import { JiraAdapter } from "@pointless/jira-adapter";
 import { PointLessOrchestrator } from "@pointless/orchestrator";
+import axios from "axios";
+
+configDotenv();
 
 const localPointer = new PointLessEngineBuilder({
   provider: LLMProvider.LOCAL,
@@ -9,7 +12,9 @@ const localPointer = new PointLessEngineBuilder({
   model: "test",
 }).build();
 
-const storySource = new JiraAdapter();
+const storySource = new JiraAdapter((path, config) => {
+  return axios.get(`${process.env.JIRA_URL}${path}`, config);
+});
 
 async function main() {
   const orchestrator = new PointLessOrchestrator(localPointer, storySource);
@@ -27,7 +32,7 @@ async function main() {
       customInstructions: "All stories should be 5 points.",
       story: {
         source: "jira",
-        url: process.env.JIRA_URL || "",
+
         issue: "SCRUM-1",
         authorization: `Basic ${Buffer.from(
           process.env.JIRA_BASIC_AUTH || ""
