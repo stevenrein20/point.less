@@ -20,22 +20,17 @@ end
 
 subgraph Integration[Integration Layer]
     AdapterJira[Jira Adapter]:::completed
-    AdapterRally[Rally Adapter]
-    AdapterTrello[Trello Adapter]
-    AdapterMonday[Monday Adapter]
+ 
 end
 
 subgraph External[External Systems]
     JiraAPI[Jira API]:::completed
-    RallyAPI[Rally API]
-    TrelloAPI[Trello API]
-    MondayAPI[Monday API]
+
 end
 
 Client -->|User Inputs| Interface
 Interface --> Orchestration
 Orchestration -->|Fetch| Integration
 AdapterJira -->|API Call| JiraAPI
-AdapterGitHub -->|API Call| GitHubAPI
 Orchestration -->|Invoke| CoreEngine
 CoreEngine -->|Recommendations| Client
