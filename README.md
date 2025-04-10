@@ -37,6 +37,7 @@ For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE
 
 - Node.js >= 18
 - pnpm >= 9.0.0
+- OpenAI API key
 
 ### Installation
 
@@ -62,9 +63,10 @@ pnpm lint
 ```
 .
 ├── apps/                # Applications
-│   ├── example/        # Example implementation
 │   ├── forge/          # Atlassian Forge app
-│   └── vscode/         # VS Code extension
+│   ├── vscode/         # VS Code extension
+│   └── nextjs/         # Next.js app
+
 └── packages/
     ├── engine/         # Core pointing engine
     ├── types/          # Shared type definitions
