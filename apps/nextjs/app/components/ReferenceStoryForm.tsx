@@ -12,7 +12,6 @@ import { FaTrash, FaPlus } from "react-icons/fa";
 import { PointLessRequest, ReferenceStory } from "@pointless/types";
 import { usePointLessStore } from "../store/pointless";
 import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { CardBox } from "./CardBox";
 
 interface ReferenceStoryFormProps {
@@ -24,8 +23,6 @@ export function ReferenceStoryForm({
   data,
   isActive,
 }: ReferenceStoryFormProps) {
-  const { isAuthenticated } = useAuth0();
-  const [showJiraModal, setShowJiraModal] = useState(false);
   const {
     referenceStories,
     customInstructions,
@@ -44,11 +41,6 @@ export function ReferenceStoryForm({
   }, [data]);
 
   const addReferenceStory = (type: "manual" | "jira" = "manual") => {
-    if (type === "jira" && !isAuthenticated) {
-      setShowJiraModal(true);
-      return;
-    }
-
     if (type === "jira") {
       setReferenceStories([
         ...(referenceStories ?? []),

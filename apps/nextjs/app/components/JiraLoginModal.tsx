@@ -1,6 +1,6 @@
 import { Modal, Stack, Text, Group, Button } from "@mantine/core";
 import { usePointLessStore } from "@/app/store/pointless";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useJiraStore } from "@/app/store/jira";
 import axios from "axios";
 
@@ -15,10 +15,10 @@ export function JiraLoginModal() {
   const { isAuthenticated, setAuth } = useJiraStore();
   const [isOpen, setIsOpen] = useState(false);
 
-  const hasJiraDependentStories = () => {
-    const isJiraStory = (s: any) => s && "source" in s && s.source === "jira";
-    return isJiraStory(story) || (referenceStories ?? []).some(isJiraStory);
-  };
+  const hasJiraDependentStories = useCallback(() => { 
+      const isJiraStory = (s: any) => s && "source" in s && s.source === "jira";
+      return isJiraStory(story) || (referenceStories ?? []).some(isJiraStory);
+  }, [story, referenceStories]);
 
   const handleRemoveJiraStories = () => {
     if (story && "source" in story && story.source === "jira") {
@@ -34,11 +34,6 @@ export function JiraLoginModal() {
   };
 
   const handleLogin = async () => {
-    await login();
-    setIsOpen(false);
-  };
-
-  const login = async () => {
     const authUrl = `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=${JIRA_CLIENT_ID}&scope=${encodeURIComponent(
       "read:jira-work write:jira-work offline_access"
     )}&redirect_uri=${encodeURIComponent(
@@ -46,6 +41,8 @@ export function JiraLoginModal() {
     )}&response_type=code&prompt=consent`;
 
     window.open(authUrl, "_blank", "width=600,height=700");
+
+    setIsOpen(false);
   };
 
   useEffect(() => {

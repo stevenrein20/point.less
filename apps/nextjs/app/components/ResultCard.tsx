@@ -8,9 +8,11 @@ import {
 } from "@mantine/core";
 import { CardBox } from "./CardBox";
 import { useState } from "react";
-import { pointStory } from "@/app/services/point";
 import { usePointLessStore } from "../store/pointless";
 import { notifications } from "@mantine/notifications";
+import { useJiraStore } from "../store/jira";
+import { useSession } from "next-auth/react";
+import { pointStoryAction } from "../actions/point";
 
 interface ResultCardProps {
   onBack: () => void;
@@ -18,6 +20,7 @@ interface ResultCardProps {
 }
 
 export function ResultCard({ onBack, isActive }: ResultCardProps) {
+  const { instance, accessToken } = useJiraStore();
   const [isLoading, setIsLoading] = useState(false);
   const [points, setPoints] = useState<number | null>(null);
   const [explanation, setExplanation] = useState<string>("");
@@ -36,14 +39,21 @@ export function ResultCard({ onBack, isActive }: ResultCardProps) {
 
     try {
       setIsLoading(true);
-      const result = await pointStory({
-        referenceStories,
-        customInstructions,
-        story,
-      });
+      const result = await pointStoryAction(
+        { story, referenceStories, customInstructions },
+        { instance: instance!, accessToken: accessToken! }
+      );
 
-      setPoints(result.points);
-      setExplanation(result.explanation);
+      if (!result) {
+        notifications.show({
+          title: "Error",
+          message: "Failed to point story",
+          color: "red",
+        });
+      } else {
+        setPoints(result.points);
+        setExplanation(result.explanation);
+      }
     } catch (error) {
       notifications.show({
         title: "Error",

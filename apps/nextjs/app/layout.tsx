@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
-import { MantineProvider } from "@mantine/core";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import "@mantine/core/styles.css";
+import NextAuthSessionProvider from "./components/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,11 +18,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <ColorSchemeScript defaultColorScheme="light" />
+      </head>
       <body className={inter.className}>
-        <MantineProvider>
-          <Notifications />
-          {children}
-        </MantineProvider>
+        <NextAuthSessionProvider>
+          <MantineProvider defaultColorScheme="light">
+            <Notifications />
+            {children}
+          </MantineProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

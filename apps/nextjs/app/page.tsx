@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth0 } from "@auth0/auth0-react";
 import { AppShell, Button, Container, LoadingOverlay } from "@mantine/core";
 import { Header } from "@/app/components/Header";
 import { JiraLoginModal } from "@/app/components/JiraLoginModal";
@@ -10,25 +9,22 @@ import { ReferenceStoryForm } from "@/app/components/ReferenceStoryForm";
 import { StoryForm } from "@/app/components/StoryForm";
 import { ResultCard } from "@/app/components/ResultCard";
 import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 
-// TODO Fix everything up. GEt compnent library and everything else working again.!
-// TODO Get Authentication working and required for API calls and pages to load.
-// TODO Get Jira Login Modal working correctly.
-// TODO Get AI Orchestration working optimally.
 export default function Home() {
-  const { isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { data: session, status } = useSession();
   const [currentStep, setCurrentStep] = useState(0);
 
-  if (isLoading) {
+  if (status === "loading") {
     return <LoadingOverlay visible={true} />;
   }
 
-  if (!isAuthenticated) {
+  if (!session) {
     return (
       <Container size="sm" style={{ textAlign: "center", marginTop: "4rem" }}>
         <h1>Welcome to Point.Less</h1>
         <p>Please sign in to continue</p>
-        <Button onClick={() => loginWithRedirect()}>Sign In</Button>
+        <Button onClick={() => signIn("auth0")}>Sign In</Button>
       </Container>
     );
   }

@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import {
   Group,
   Title,
@@ -10,9 +9,10 @@ import {
 } from "@mantine/core";
 import { usePointLessStore } from "../store/pointless";
 import { notifications } from "@mantine/notifications";
+import { signOut, useSession } from "next-auth/react";
 
 export function Header() {
-  const { user, logout } = useAuth0();
+  const { data } = useSession();
   const { referenceStories, customInstructions, reset } = usePointLessStore();
 
   const handleExport = () => {
@@ -76,8 +76,8 @@ export function Header() {
           <Menu.Target>
             <UnstyledButton>
               <Group gap="xs">
-                <Avatar src={user?.picture} radius="xl" />
-                <Text size="sm">{user?.name}</Text>
+                <Avatar src={data?.user?.image} radius="xl" />
+                <Text size="sm">{data?.user?.name}</Text>
               </Group>
             </UnstyledButton>
           </Menu.Target>
@@ -87,11 +87,9 @@ export function Header() {
             <Menu.Divider />
             <Menu.Item
               color="red"
-              onClick={() =>
-                logout({ logoutParams: { returnTo: window.location.origin } })
-              }
+              onClick={() => signOut({ callbackUrl: window.location.origin })}
             >
-              Sign out
+              <Button onClick={() => signOut({ callbackUrl: window.location.origin })}>Sign Out</Button>
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
