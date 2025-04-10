@@ -7,8 +7,7 @@ classDef completed fill:#90EE90,stroke:#006400,stroke-width:2px
 subgraph Client[Client Layer]
     UI1[VS Code Extension]:::completed
     UI2[Jira Integration]:::completed
-    %% Web App - Should store context (ref stories, custom instruction). Should also have a way to download it to some file format like .pointless. in local storage. Should authenicate to Jira to pull stories, should have fields to do stories locally too, OpenAI should use my Key and we should have Firebase Auth.
-    UI3[Web App] 
+    UI3[Web App]:::completed
 end
 
 subgraph Logic[Application Layer]
@@ -19,7 +18,6 @@ end
 
 subgraph Integration[Integration Layer]
     AdapterJira[Jira Adapter]:::completed
- 
 end
 
 subgraph External[External Systems]
