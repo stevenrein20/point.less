@@ -19,9 +19,9 @@
     "@forge/bridge": "^4.5.0",
     "@forge/react": "^11.0.0",
     "@forge/resolver": "^1.6.9",
-    "@pointless/engine": "workspace:*",
-    "@pointless/jira-adapter": "workspace:*",
-    "@pointless/orchestrator": "workspace:*",
+    "@pointless/engine": "*",
+    "@pointless/jira-adapter": "*",
+    "@pointless/orchestrator": "*",
     "react": "^18.2.0"
   }
 }

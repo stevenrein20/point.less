@@ -36,26 +36,26 @@ For detailed architecture information, please see [ARCHITECTURE.md](ARCHITECTURE
 ### Prerequisites
 
 - Node.js >= 18
-- pnpm >= 9.0.0
+- npm
 - OpenAI API key
 
 ### Installation
 
 ```bash
-pnpm install
+npm install
 ```
 
 ### Development
 
 ```bash
 # Build all packages
-pnpm build
+npm run build
 
 # Start development mode
-pnpm dev
+npm run dev
 
 # Run linting
-pnpm lint
+npm run lint
 ```
 
 ## Project Structure

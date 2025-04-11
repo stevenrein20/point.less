@@ -16,7 +16,7 @@
     "@langchain/core": "^0.3.0",
     "@langchain/google-genai": "^0.1.11",
     "@langchain/openai": "^0.4.7",
-    "@pointless/types": "workspace:*",
+    "@pointless/types": "*",
     "langchain": "^0.3.19",
     "zod": "^3.24.2"
   },

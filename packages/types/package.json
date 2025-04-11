@@ -13,8 +13,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@pointless/eslint-config": "workspace:*",
-    "@pointless/typescript-config": "workspace:*",
+    "@pointless/eslint-config": "*",
+    "@pointless/typescript-config": "*",
     "eslint": "^8.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"

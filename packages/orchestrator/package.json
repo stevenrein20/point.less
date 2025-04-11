@@ -12,7 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@pointless/types": "workspace:*"
+    "@pointless/types": "*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",

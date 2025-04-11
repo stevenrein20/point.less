@@ -39,15 +39,15 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run build",
+    "vscode:prepublish": "npm run build",
     "build": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run build",
+    "pretest": "npm run build",
     "lint": "eslint src --ext ts",
-    "dev": "pnpm run watch"
+    "dev": "npm run watch"
   },
   "devDependencies": {
-    "@pointless/types": "workspace:*",
+    "@pointless/types": "*",
     "@types/node": "18.x",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
@@ -56,9 +56,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@pointless/engine": "workspace:*",
-    "@pointless/jira-adapter": "workspace:*",
-    "@pointless/orchestrator": "workspace:*",
+    "@pointless/engine": "*",
+    "@pointless/jira-adapter": "*",
+    "@pointless/orchestrator": "*",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5"
   }
