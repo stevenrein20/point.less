@@ -1,8 +1,8 @@
 "use client";
 
-import { Loader, Center, Stack, Text } from "@mantine/core";
 import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { Loader, Center, Stack, Text } from "@mantine/core";
 
 export default function Callback() {
   return (

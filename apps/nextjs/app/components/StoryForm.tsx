@@ -7,9 +7,9 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { CardBox } from "./CardBox";
 import { Story } from "@pointless/types";
 import { usePointLessStore } from "../store/pointless";
+import { CardBox } from "./CardBox";
 
 interface StoryFormProps {
   isActive: boolean;

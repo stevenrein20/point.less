@@ -1,9 +1,9 @@
-import { Card, Button, Stack, Text, FileInput } from "@mantine/core";
-import { CardBox } from "./CardBox";
 import { useRef, useState } from "react";
+import { Card, Button, Stack, Text, FileInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { PointLessRequest } from "@pointless/types";
 import { usePointLessStore } from "../store/pointless";
+import { CardBox } from "./CardBox";
 
 interface ConfigUploadProps {
   onNext: (data?: Partial<PointLessRequest>) => void;

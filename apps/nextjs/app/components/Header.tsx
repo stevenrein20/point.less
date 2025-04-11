@@ -1,3 +1,4 @@
+import { signOut, useSession } from "next-auth/react";
 import {
   Group,
   Title,
@@ -7,9 +8,8 @@ import {
   Text,
   Button,
 } from "@mantine/core";
-import { usePointLessStore } from "../store/pointless";
 import { notifications } from "@mantine/notifications";
-import { signOut, useSession } from "next-auth/react";
+import { usePointLessStore } from "../store/pointless";
 
 export function Header() {
   const { data } = useSession();
@@ -89,7 +89,11 @@ export function Header() {
               color="red"
               onClick={() => signOut({ callbackUrl: window.location.origin })}
             >
-              <Button onClick={() => signOut({ callbackUrl: window.location.origin })}>Sign Out</Button>
+              <Button
+                onClick={() => signOut({ callbackUrl: window.location.origin })}
+              >
+                Sign Out
+              </Button>
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>

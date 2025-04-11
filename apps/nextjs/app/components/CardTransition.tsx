@@ -1,5 +1,5 @@
-import { Box, Container, Button } from "@mantine/core";
 import { ReactNode } from "react";
+import { Box, Container, Button } from "@mantine/core";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 interface CardTransitionProps {

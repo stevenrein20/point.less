@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Stack,
@@ -6,13 +7,11 @@ import {
   LoadingOverlay,
   Button,
 } from "@mantine/core";
-import { CardBox } from "./CardBox";
-import { useState } from "react";
-import { usePointLessStore } from "../store/pointless";
 import { notifications } from "@mantine/notifications";
+import { usePointLessStore } from "../store/pointless";
 import { useJiraStore } from "../store/jira";
-import { useSession } from "next-auth/react";
 import { pointStoryAction } from "../actions/point";
+import { CardBox } from "./CardBox";
 
 interface ResultCardProps {
   onBack: () => void;

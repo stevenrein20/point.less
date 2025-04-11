@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { AppShell, Button, Container, LoadingOverlay } from "@mantine/core";
 import { Header } from "@/app/components/Header";
 import { JiraLoginModal } from "@/app/components/JiraLoginModal";
@@ -8,8 +10,6 @@ import { ConfigUpload } from "@/app/components/ConfigUpload";
 import { ReferenceStoryForm } from "@/app/components/ReferenceStoryForm";
 import { StoryForm } from "@/app/components/StoryForm";
 import { ResultCard } from "@/app/components/ResultCard";
-import { useState } from "react";
-import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
   const { data: session, status } = useSession();

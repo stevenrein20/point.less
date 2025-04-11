@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Card,
   Stack,
@@ -11,7 +12,6 @@ import {
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { PointLessRequest, ReferenceStory } from "@pointless/types";
 import { usePointLessStore } from "../store/pointless";
-import { useEffect, useState } from "react";
 import { CardBox } from "./CardBox";
 
 interface ReferenceStoryFormProps {

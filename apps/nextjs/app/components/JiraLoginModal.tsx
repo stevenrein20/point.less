@@ -1,8 +1,8 @@
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
 import { Modal, Stack, Text, Group, Button } from "@mantine/core";
 import { usePointLessStore } from "@/app/store/pointless";
-import { useCallback, useEffect, useState } from "react";
 import { useJiraStore } from "@/app/store/jira";
-import axios from "axios";
 
 const JIRA_CLIENT_ID = process.env.NEXT_PUBLIC_JIRA_CLIENT_ID || "";
 const JIRA_CALLBACK_URL =
