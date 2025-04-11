@@ -20,7 +20,7 @@ const initialState = {
   customInstructions: "",
 };
 
-export const usePointLessStore = create<PointLessState>(
+export const usePointLessStore = create<PointLessState>()(
   persist<PointLessState>(
     (set) => ({
       ...initialState,

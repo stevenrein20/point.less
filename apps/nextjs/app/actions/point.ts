@@ -10,7 +10,7 @@ import {
 } from "@pointless/engine";
 import { getServerSession } from "next-auth";
 import axios from "axios";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/auth";
 
 export async function pointStoryAction(
   pointlessRequest: PointLessRequest,

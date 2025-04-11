@@ -20,7 +20,7 @@ const initialState = {
   expiresAt: undefined,
 };
 
-export const useJiraStore = create<JiraState>(
+export const useJiraStore = create<JiraState>()(
   persist<JiraState>(
     (set, get) => ({
       ...initialState,
